@@ -1,0 +1,5 @@
+C:\Users\ishihara\Source\Repos\SimulationLogGenerator\obj\x86\Debug\CarSimulatorCoodinate2.Properties.Resources.resources
+C:\Users\ishihara\Source\Repos\SimulationLogGenerator\obj\x86\Debug\SegmentInserter.SegmentInserter.resources
+C:\Users\ishihara\Source\Repos\SimulationLogGenerator\obj\x86\Debug\SimulationLogGenerator.csproj.GenerateResource.Cache
+C:\Users\ishihara\Source\Repos\SimulationLogGenerator\obj\x86\Debug\SimulationLogGenerator.SegmentInserter.resources
+C:\Users\ishihara\Source\Repos\SimulationLogGenerator\obj\x86\Debug\SimulationLogGenerator.csprojResolveAssemblyReference.cache

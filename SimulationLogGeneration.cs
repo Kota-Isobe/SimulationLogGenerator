@@ -1,4 +1,5 @@
 ﻿using CarSimulatorCoodinate2;
+using SimulationLogGenerator;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,11 +12,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SimulationLogGenerator
+namespace SegmentInserter
 {
-    public partial class SimulationLogGenerator : Form
+    public partial class SegmentInserter : Form
     {
-        public SimulationLogGenerator()
+        public SegmentInserter()
         {
             InitializeComponent();
         }
@@ -51,18 +52,18 @@ namespace SimulationLogGenerator
 
 
             DataTable LinkTable = DatabaseAccessor.LinkTableGetter2(id);
-      //      Console.Write(LinkTable.Rows.Count);
+            //      Console.Write(LinkTable.Rows.Count);
 
             DataRow[] LinkRows = LinkTable.Select(null, "DISTANCE");
             DataRow[] StartLink = LinkTable.Select("NUM = " + startNum);
             List<LinkData> linkList = new List<LinkData>();
-      //      Console.Write("\nああああ\n\n");
+            //      Console.Write("\nああああ\n\n");
             // Console.Write(StartLink.ToString());
 
             linkList.Add(new LinkData(Convert.ToString(StartLink[0]["LINK_ID"]), Convert.ToInt32(StartLink[0]["NUM"]),
                 Convert.ToDouble(StartLink[0]["START_LAT"]), Convert.ToDouble(StartLink[0]["START_LONG"]),
                 Convert.ToDouble(StartLink[0]["END_LAT"]), Convert.ToDouble(StartLink[0]["END_LONG"]), Convert.ToDouble(StartLink[0]["DISTANCE"])));
-      //      Console.Write("\nいいいい\n\n");
+            //      Console.Write("\nいいいい\n\n");
 
             //Console.Write(LinkRows.Length + "\n");
             //Console.Write(StartLink.Length + "\n");
@@ -113,12 +114,14 @@ namespace SimulationLogGenerator
 
             DataTable RunTable = DatabaseAccessor.RunTableGetter(id, tripid);      //走行データ取得
             List<RunData> runList = new List<RunData>();
-      //      Console.Write(RunTable.Rows.Count+"aaaaaaaa\n\n\n\n");
-           DataRow[] RunRows = RunTable.Select(null, "JST");
+            //      Console.Write(RunTable.Rows.Count+"aaaaaaaa\n\n\n\n");
+            DataRow[] RunRows = RunTable.Select(null, "JST");
             for (int i = 0; i < RunRows.Length; i++)
             {
-                runList.Add(new RunData(Convert.ToInt32(RunRows[i]["TRIP_ID"]),Convert.ToString(RunRows[i]["JST"]), Convert.ToDouble(RunRows[i]["LATITUDE"]),
+                runList.Add(new RunData(Convert.ToInt32(RunRows[i]["TRIP_ID"]), Convert.ToString(RunRows[i]["JST"]), Convert.ToDouble(RunRows[i]["LATITUDE"]),
                                                        Convert.ToDouble(RunRows[i]["LONGITUDE"])));
+
+                Console.Write(i + "," + RunRows[i]["TRIP_ID"] + "," + RunRows[i]["JST"] + "," + RunRows[i]["LATITUDE"] + "," + RunRows[i]["LONGITUDE"] + "\n");
             }
 
 
@@ -126,10 +129,10 @@ namespace SimulationLogGenerator
 
             resultrealcarmatching = MatchingCarPosition(linkList, runList);
             Console.Write("\nおおおお");
-            resultCarPositionData = makePositionData(linkList,resultrealcarmatching,NumofCar);
+            resultCarPositionData = makePositionData(linkList, resultrealcarmatching, NumofCar);
             Console.Write("\nおおおお");
             resultCoodinate = makeCoodinateData(linkList, resultCarPositionData);
-            WriteCsv(resultCoodinate,4, 18, 10, 40);
+            WriteCsv(resultCoodinate, 4, 18, 10, 40);
 
 
 
@@ -141,7 +144,7 @@ namespace SimulationLogGenerator
         }
 
 
-        private static void WriteCsv(List<CoodinateData>resultcoordinate,int semantici_id, int trip_id, int num, int distance)
+        private static void WriteCsv(List<CoodinateData> resultcoordinate, int semantici_id, int trip_id, int num, int distance)
         {
 
             try
@@ -150,11 +153,11 @@ namespace SimulationLogGenerator
                 //         falseにすると，ファイルを新規作成する
                 var append = false;
                 // 出力用のファイルを開く
-                using (var sw = new System.IO.StreamWriter(@"C: \Users\ishihara\Source\Repos\新しいリポジトリ\SegmentInserter\"+semantici_id+"_"+trip_id+"_"+num+"_"+distance+"debug.csv", append))
+                using (var sw = new System.IO.StreamWriter(@"C: \Users\ishihara\Source\Repos\新しいリポジトリ\SegmentInserter\" + semantici_id + "_" + trip_id + "_" + num + "_" + distance + "debug.csv", append))
                 {
                     for (int i = 0; i < resultcoordinate.Count; ++i)
                     {
-                        sw.WriteLine("{0},{1},{2},{3},{4}", resultcoordinate[i].JST, resultcoordinate[i].TRIP_ID,resultcoordinate[i].CAR_NUM,resultcoordinate[i].LONGITUDE,resultcoordinate[i].LATITUDE);
+                        sw.WriteLine("{0},{1},{2},{3},{4}", resultcoordinate[i].JST, resultcoordinate[i].TRIP_ID, resultcoordinate[i].CAR_NUM, resultcoordinate[i].LONGITUDE, resultcoordinate[i].LATITUDE);
                     }
                 }
             }
@@ -167,7 +170,7 @@ namespace SimulationLogGenerator
 
 
 
-        private List<CarPositionData> makePositionData(List<LinkData> linkList, List<RealCarPositionMatchingData>realcarposi,int Ncar) //Ncar は台数
+        private List<CarPositionData> makePositionData(List<LinkData> linkList, List<RealCarPositionMatchingData> realcarposi, int Ncar) //Ncar は台数
         {
             List<CarPositionData> result = new List<CarPositionData>();
             // double v_distance = Convert.ToInt32(textBox6.Text);         //車間距離
@@ -180,7 +183,7 @@ namespace SimulationLogGenerator
                 int tempNUM = realcarposi[i].NUM;
                 int j = 0;
 
-        //        result.Add(new CarPositionData(realcarposi[i].TRIP_ID, realcarposi[i].JST,0,realcarposi[i].LINK_ID,realcarposi[i].NUM,realcarposi[i].END_POINT_OFFSET));
+                //        result.Add(new CarPositionData(realcarposi[i].TRIP_ID, realcarposi[i].JST,0,realcarposi[i].LINK_ID,realcarposi[i].NUM,realcarposi[i].END_POINT_OFFSET));
 
 
                 for (int k = 0; k < linkList.Count(); k++)
@@ -225,7 +228,7 @@ namespace SimulationLogGenerator
                     else if (endPointOffset == v_distance && j >= 0)
                     {
                         j--;
-                        if(j < 0) break;
+                        if (j < 0) break;
                         nextendPointOffset = linkList[j].DISTANCE;
                         LinkID = linkList[j].LINK_ID;
                         tempNUM = linkList[j].NUM;
@@ -242,19 +245,21 @@ namespace SimulationLogGenerator
         }
 
 
-        private List<CoodinateData> makeCoodinateData(List<LinkData>linkList,List<CarPositionData>carPositionData)
+        private List<CoodinateData> makeCoodinateData(List<LinkData> linkList, List<CarPositionData> carPositionData)
         {
             int Num = 0;
             GeoCoordinate coordinate = new GeoCoordinate();
-            GeoCoordinate LinkStartCoodinate  = new GeoCoordinate();
+            GeoCoordinate LinkStartCoodinate = new GeoCoordinate();
             GeoCoordinate LinkEndCoodinate = new GeoCoordinate();
 
             List<CoodinateData> result = new List<CoodinateData>();
             for (int i = 0; i < carPositionData.Count; i++)
             {
                 Num = carPositionData[i].NUM;
-                for(int k = 0; k < linkList.Count; k++) {
-                    if (linkList[k].NUM == Num) {
+                for (int k = 0; k < linkList.Count; k++)
+                {
+                    if (linkList[k].NUM == Num)
+                    {
                         LinkStartCoodinate.Latitude = linkList[k].START_LAT;
                         LinkStartCoodinate.Longitude = linkList[k].START_LONG;
                         LinkEndCoodinate.Latitude = linkList[k].END_LAT;
@@ -262,13 +267,13 @@ namespace SimulationLogGenerator
 
                         break;
 
-                     }
+                    }
 
                 }
 
-                coordinate = HubenyDistanceCalculator.CalcCoordinateFromHubenyFormula(LinkEndCoodinate,carPositionData[i].END_POINT_OFFSET,LinkStartCoodinate);
-                result.Add(new CoodinateData(carPositionData[i].TRIP_ID,carPositionData[i].CAR_NUM,coordinate.Longitude,coordinate.Latitude,carPositionData[i].JST));
-               
+                coordinate = HubenyDistanceCalculator.CalcCoordinateFromHubenyFormula(LinkEndCoodinate, carPositionData[i].END_POINT_OFFSET, LinkStartCoodinate);
+                result.Add(new CoodinateData(carPositionData[i].TRIP_ID, carPositionData[i].CAR_NUM, coordinate.Longitude, coordinate.Latitude, carPositionData[i].JST));
+
             }
 
 
@@ -283,20 +288,27 @@ namespace SimulationLogGenerator
 
             List<RealCarPositionMatchingData> result = new List<RealCarPositionMatchingData>();
 
-            double minDist = 255;
-            int tempNum = 0;
-            double tempEndPointDist = 0;
-            string tempLinkId = null;
-            double offset = 0;
-    
+
 
             for (int k = 0; k < runList.Count; k++)
             {
+                double minDist = 255;
+                int tempNum = 0;
+                double tempEndPointDist = 0;
+                string tempLinkId = null;
+                double endoffset = 0;
+
                 for (int i = 0; i < linkList.Count; i++)
                 {        //各リンクに対して
                     Vector2D linkStartEdge = new Vector2D(linkList[i].START_LAT, linkList[i].START_LONG);
                     Vector2D linkEndEdge = new Vector2D(linkList[i].END_LAT, linkList[i].END_LONG);
                     Vector2D GPSPoint = new Vector2D(runList[k].LATITUDE, runList[k].LONGITUDE);
+                    //       Console.Write(GPSPoint.x+","+GPSPoint.y+"\n");
+
+                    GeoCoordinate coordinate = new GeoCoordinate();
+                    GeoCoordinate LinkStartCoodinate = new GeoCoordinate();
+                    GeoCoordinate LinkEndCoodinate = new GeoCoordinate();
+
 
                     //線分内の最近傍点を探す
                     Vector2D matchedPoint = Vector2D.nearest(linkStartEdge, linkEndEdge, GPSPoint);
@@ -304,31 +316,32 @@ namespace SimulationLogGenerator
                     //最近傍点との距離
                     double tempDist = Vector2D.distance(GPSPoint, matchedPoint);
 
-                    double EndPointDist = Vector2D.distance(linkEndEdge, GPSPoint);
+                    //            double EndPointDist = Vector2D.distance(linkEndEdge, GPSPoint);
 
 
                     //リンク集合の中での距離最小を探す
                     if (tempDist < minDist)
                     {
-                        GeoCoordinate linkStart = new GeoCoordinate();
-                        linkStart.Latitude = linkList[i].START_LAT;
-                        linkStart.Longitude = linkList[i].START_LONG;
+                        GeoCoordinate linkEnd = new GeoCoordinate();
+                        linkEnd.Latitude = linkList[i].END_LAT;
+                        linkEnd.Longitude = linkList[i].END_LONG;
                         GeoCoordinate gpsPoint = new GeoCoordinate();
                         gpsPoint.Latitude = runList[k].LATITUDE;
                         gpsPoint.Longitude = runList[k].LONGITUDE;
 
                         minDist = tempDist;
-                        tempEndPointDist = EndPointDist;
+                        //        Console.Write(k+"  "+minDist+"   "+linkList[i].LINK_ID+ "\n");
+                        //               tempEndPointDist = EndPointDist;
 
                         tempNum = linkList[i].NUM;
                         tempLinkId = linkList[i].LINK_ID;
 
-                        offset = HubenyDistanceCalculator.CalcHubenyFormula(linkStart, gpsPoint);
+                        endoffset = HubenyDistanceCalculator.CalcHubenyFormula(linkEnd, gpsPoint);
                     }
                 }
 
-                result.Add(new RealCarPositionMatchingData(runList[k].TRIP_ID, runList[k].JST, runList[k].LATITUDE, runList[k].LONGITUDE, tempLinkId ,tempNum, tempEndPointDist));
-                Console.Write(k+"  "+ runList[k].LATITUDE+"   "+runList[k].LONGITUDE + "   " + tempLinkId + "   " + tempNum + "   " + tempEndPointDist+"\n");
+                result.Add(new RealCarPositionMatchingData(runList[k].TRIP_ID, runList[k].JST, runList[k].LATITUDE, runList[k].LONGITUDE, tempLinkId, tempNum, endoffset));
+                Console.Write(k + "  " + runList[k].LATITUDE + "   " + runList[k].LONGITUDE + "   " + tempLinkId + "   " + tempNum + "   " + endoffset + "\n");
             }
             return result;
         }
@@ -368,13 +381,14 @@ namespace SimulationLogGenerator
 
     }
     class RunData
-    {  public int TRIP_ID { get; set; }
+    {
+        public int TRIP_ID { get; set; }
         public string JST { get; set; }
         public double LATITUDE { get; set; }
         public double LONGITUDE { get; set; }
 
 
-        public RunData(int TRIP_ID,String JST, double LATITUDE, double LONGITUDE)
+        public RunData(int TRIP_ID, String JST, double LATITUDE, double LONGITUDE)
         {
             this.TRIP_ID = TRIP_ID;
             this.JST = JST;
@@ -415,7 +429,7 @@ namespace SimulationLogGenerator
 
         //  public double ALTITUDE { get; set; }
 
-        public CoodinateData(int TRIP_ID,int CAR_NUM, double LONGITUDE, double LATITUDE, string JST)
+        public CoodinateData(int TRIP_ID, int CAR_NUM, double LONGITUDE, double LATITUDE, string JST)
         {
             this.TRIP_ID = TRIP_ID;
             this.CAR_NUM = CAR_NUM;
@@ -427,7 +441,8 @@ namespace SimulationLogGenerator
     }
 
 
-    class CarPositionData { 
+    class CarPositionData
+    {
 
         public int TRIP_ID { get; set; }
 
@@ -471,7 +486,7 @@ namespace SimulationLogGenerator
 
         //  public double ALTITUDE { get; set; }
 
-        public RealCarPositionMatchingData( int TRIP_ID,string JST, double LATITUDE, double LONGITUDE, string LINK_ID, int NUM,double END_POINT_OFFSET)
+        public RealCarPositionMatchingData(int TRIP_ID, string JST, double LATITUDE, double LONGITUDE, string LINK_ID, int NUM, double END_POINT_OFFSET)
         {
             this.TRIP_ID = TRIP_ID;
             this.JST = JST;

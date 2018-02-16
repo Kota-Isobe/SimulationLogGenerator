@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace SimulationLogGenerator
+namespace SegmentInserter
 {
-    partial class SimulationLogGenerator
+    partial class SegmentInserter
     {
         /// <summary>
         /// 必要なデザイナー変数です。
