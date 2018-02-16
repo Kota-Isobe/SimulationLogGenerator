@@ -32,9 +32,9 @@ namespace SegmentInserter
             int tripid = 0;
             int NumofCar = 0;
 
-            //id = Convert.ToInt32(textBox1.Text);
-            //tripid = Convert.ToInt32(textBox4.Text);
-            //NumofCar = Convert.ToInt32(textBox5.Text);
+            id = Convert.ToInt32(textBox1.Text);
+            tripid = Convert.ToInt32(textBox4.Text);
+            NumofCar = Convert.ToInt32(textBox5.Text);
 
             id = 4;
             tripid = 18;
@@ -44,11 +44,11 @@ namespace SegmentInserter
             int startNum = 0;
             int endNum = 0;
 
-            //startNum = Convert.ToInt32(textBox2.Text);
-            //endNum = Convert.ToInt32(textBox3.Text);
+            startNum = Convert.ToInt32(textBox2.Text);
+            endNum = Convert.ToInt32(textBox3.Text);
 
-            startNum = 45667;
-            endNum = 745956;
+            //    startNum = 45667;
+            //    endNum = 745956;
 
 
             DataTable LinkTable = DatabaseAccessor.LinkTableGetter2(id);
@@ -132,8 +132,7 @@ namespace SegmentInserter
             resultCarPositionData = makePositionData(linkList, resultrealcarmatching, NumofCar);
             Console.Write("\nおおおお");
             resultCoodinate = makeCoodinateData(linkList, resultCarPositionData);
-            WriteCsv(resultCoodinate, 4, 18, 10, 40);
-
+            WriteCsv(resultCoodinate, Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox4.Text), Convert.ToInt32(textBox5.Text), Convert.ToInt32(textBox6.Text));
 
 
             //   DatabaseAccessor.InsertLinkList(resultLinkList);
@@ -147,24 +146,38 @@ namespace SegmentInserter
         private static void WriteCsv(List<CoodinateData> resultcoordinate, int semantici_id, int trip_id, int num, int distance)
         {
 
-            try
+            for (int j = 0; j < num; j++)
             {
-                // appendをtrueにすると，既存のファイルに追記
-                //         falseにすると，ファイルを新規作成する
-                var append = false;
-                // 出力用のファイルを開く
-                using (var sw = new System.IO.StreamWriter(@"C: \Users\ishihara\Source\Repos\新しいリポジトリ\SegmentInserter\" + semantici_id + "_" + trip_id + "_" + num + "_" + distance + "debug.csv", append))
+                List<CoodinateData> insertcoordinate = new List<CoodinateData>();
+                for (int k = 0; k < resultcoordinate.Count; k++)
                 {
-                    for (int i = 0; i < resultcoordinate.Count; ++i)
+                    if (resultcoordinate[k].CAR_NUM == j)
                     {
-                        sw.WriteLine("{0},{1},{2},{3},{4}", resultcoordinate[i].JST, resultcoordinate[i].TRIP_ID, resultcoordinate[i].CAR_NUM, resultcoordinate[i].LONGITUDE, resultcoordinate[i].LATITUDE);
+                        insertcoordinate.Add(resultcoordinate[k]);
                     }
                 }
-            }
-            catch (System.Exception e)
-            {
-                // ファイルを開くのに失敗したときエラーメッセージを表示
-                System.Console.WriteLine(e.Message);
+
+                try
+                {
+                    // appendをtrueにすると，既存のファイルに追記
+                    //         falseにすると，ファイルを新規作成する
+                    var append = false;
+                    // 出力用のファイルを開く
+                    using (var sw = new System.IO.StreamWriter(@"C: \Users\ishihara\Source\Repos\新しいリポジトリ\SegmentInserter\" + "sim_" + semantici_id + "_" + trip_id + "_" + num + "_" + distance + "M" + j + ".csv", append))
+                    {
+                        for (int i = 0; i < insertcoordinate.Count; ++i)
+                        {
+                            sw.WriteLine("{0},{1},{2},{3},{4}", insertcoordinate[i].JST, insertcoordinate[i].TRIP_ID, insertcoordinate[i].CAR_NUM, insertcoordinate[i].LONGITUDE, insertcoordinate[i].LATITUDE);
+                        }
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    // ファイルを開くのに失敗したときエラーメッセージを表示
+                    System.Console.WriteLine(e.Message);
+                }
+
+
             }
         }
 
@@ -173,8 +186,8 @@ namespace SegmentInserter
         private List<CarPositionData> makePositionData(List<LinkData> linkList, List<RealCarPositionMatchingData> realcarposi, int Ncar) //Ncar は台数
         {
             List<CarPositionData> result = new List<CarPositionData>();
-            // double v_distance = Convert.ToInt32(textBox6.Text);         //車間距離
-            double v_distance = 40;
+            double v_distance = Convert.ToInt32(textBox6.Text);         //車間距離
+            //double v_distance = 40;
 
             for (int i = 0; i < realcarposi.Count; i++)
             {
